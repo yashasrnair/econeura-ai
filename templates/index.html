@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script src='https://www.noupe.com/embed/019a149508867e14916d37f6052ae9f52c66.js'></script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EcoNeura AI</title>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <!-- Vanilla Tilt -->
+  <script src="https://cdn.jsdelivr.net/npm/vanilla-tilt@1.7.0/dist/vanilla-tilt.min.js"></script>
+
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <!-- AOS Animations -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <style>
+    :root {
+      --primary: #00ff88;
+      --success: #00cc66;
+      --danger: #ff3366;
+      --bg-start: #0a2e1a;
+      --bg-end: #0f4d2a;
+      --card-bg: rgba(15, 45, 35, 0.75);
+      --glass: rgba(0, 255, 136, 0.1);
+      --text: #e0ffed;
+      --text-muted: #88ffbb;
+      --glow: 0 0 20px rgba(0, 255, 136, 0.4);
+      --shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+      --border: rgba(0, 255, 136, 0.3);
+    }
+
+    [data-theme="light"] {
+      --primary: #00cc66;
+      --success: #00b347;
+      --danger: #ff4444;
+      --bg-start: #e8f5e9;
+      --bg-end: #c8e6c9;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --glass: rgba(0, 204, 102, 0.15);
+      --text: #1b5e20;
+      --text-muted: #2e7d32;
+      --glow: 0 0 15px rgba(0, 204, 102, 0.3);
+      --shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      --border: rgba(0, 204, 102, 0.4);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+      overflow-x: hidden;
+      position: relative;
+      transition: all 0.4s ease;
+    }
+
+    /* Particles Background */
+    .particles {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    .particle {
+      position: absolute;
+      background: var(--primary);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 15s infinite linear;
+      box-shadow: var(--glow);
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+      10% { opacity: 0.4; }
+      90% { opacity: 0.1; }
+      100% { transform: translateY(-100px) scale(1); opacity: 0; }
+    }
+
+    /* Container */
+    .container {
+      display: grid;
+      gap: 12px;
+      width: 100%;
+      max-width: 960px;
+      background: var(--card-bg);
+      padding: 16px;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+      position: relative;
+      z-index: 1;
+    }
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: 1fr 2.5fr 1fr;
+        grid-template-rows: auto 1fr auto auto auto;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(15, 45, 35, 0.7);
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0, 212, 255, 0.1);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--glow), 0 15px 30px rgba(0, 0, 0, 0.3);
+      border-color: var(--primary);
+    }
+    .light .card {
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header */
+    .header {
+      grid-column: 1 / -1;
+      font-size: 1.5rem;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px;
+      border-bottom: 2px solid var(--primary);
+      font-family: 'Orbitron', sans-serif;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: inherit;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+    .theme-toggle:hover {
+      background: var(--glass);
+      transform: rotate(20deg);
+    }
+
+    /* Controls */
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media (min-width: 768px) {
+      .controls { grid-column: 1/2; grid-row: 2/6; grid-template-columns: 1fr; }
+    }
+    .btn {
+      background: linear-gradient(145deg, #0f4d2a, #1a5f3a);
+      color: white;
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      padding: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .btn:hover {
+      background: var(--primary);
+      color: #000;
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: var(--glow);
+    }
+    .btn i { transition: transform 0.3s; }
+    .btn:hover i { transform: rotate(20deg); }
+
+    /* Live Feed */
+    .live-feed {
+      position: relative;
+    }
+    .live-feed img, .live-feed video {
+      width: 100%;
+      border-radius: 10px;
+      background: #111;
+      object-fit: cover;
+      height: 100%;
+      min-height: 200px;
+    }
+    .overlay {
+      position: absolute;
+      bottom: 8px; left: 8px;
+      background: rgba(0,0,0,0.7);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      border-left: 4px solid;
+    }
+    .overlay.healthy { border-color: var(--success); color: var(--success); }
+    .overlay.diseased { border-color: var(--danger); color: var(--danger); }
+
+    /* Plant Count */
+    .count .d { color: var(--danger); }
+    .count .h { color: var(--success); }
+
+    /* History */
+    .history ul {
+      list-style: none;
+      max-height: 120px;
+      overflow-y: auto;
+      padding: 0;
+    }
+    .history li {
+      margin: 4px 0;
+      padding: 6px;
+      background: var(--glass);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      text-align: left;
+    }
+
+    /* Chart */
+    #pc { max-height: 140px; }
+
+    /* Sensors */
+    .sensors div {
+      margin: 6px 0;
+      font-size: 0.9rem;
+    }
+
+    /* Process & Status */
+    .process, .status { font-weight: bold; }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-content {
+      background: var(--card-bg);
+      margin: 10% auto;
+      padding: 20px;
+      border: 2px solid var(--primary);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      position: relative;
+      color: var(--text);
+    }
+    .close {
+      position: absolute;
+      top: 8px; right: 14px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #aaa;
+    }
+    .close:hover { color: white; }
+
+    .upload-area {
+      border: 2px dashed var(--primary);
+      padding: 16px;
+      margin: 14px 0;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .upload-area:hover {
+      background: var(--glass);
+      border-color: var(--success);
+    }
+
+    .progress-bar {
+      height: 16px;
+      background: #0a2e1a;
+      border-radius: 8px;
+      margin: 14px 0;
+      overflow: hidden;
+    }
+    .progress {
+      height: 100%;
+      background: var(--primary);
+      width: 0;
+      transition: width 0.4s ease;
+    }
+
+    /* Progress Ring */
+    .progress-ring {
+      width: 70px; height: 70px;
+      margin: 16px auto;
+      position: relative;
+    }
+    .progress-ring circle {
+      fill: none;
+      stroke: rgba(255,255,255,0.1);
+      stroke-width: 7;
+    }
+    .progress-ring .progress {
+      stroke: var(--primary);
+      stroke-linecap: round;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      transition: stroke-dashoffset 0.6s ease;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 30px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--card-bg);
+      color: var(--text);
+      padding: 12px 24px;
+      border-radius: 50px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--primary);
+      z-index: 1002;
+      opacity: 0;
+      transition: all 0.4s ease;
+      font-weight: 500;
+    }
+    .toast.show { opacity: 1; bottom: 50px; }
+
+    /* 3D Tilt */
+    .tilt-card { transition: none !important; }
+    
+    /* Model Available Indicator */
+    .model-available {
+      background: linear-gradient(145deg, #00cc66, #00b347) !important;
+      color: white !important;
+    }
+  </style>
+</head>
+<body data-theme="dark">
+
+  <!-- Particles -->
+  <div class="particles" id="particles"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <div class="container" data-aos="fade-up">
+    <!-- Header -->
+    <div class="card header">
+      <div>ECONEURA AI</div>
+      <button class="theme-toggle" id="theme-toggle"><i class="fas fa-moon"></i></button>
+    </div>
+
+    <!-- Controls -->
+    <div class="card controls tilt-card" data-tilt>
+      <button class="btn" id="rescan-btn"><i class="fas fa-sync-alt"></i> Re-Analysis</button>
+      <button class="btn" id="classify-btn"><i class="fas fa-robot"></i> Classify</button>
+      <button class="btn" id="water-btn"><i class="fas fa-tint"></i> Water</button>
+      <button class="btn" id="pesticide-btn"><i class="fas fa-spray-can"></i> Pesticide</button>
+      <button class="btn" id="seeding-btn"><i class="fas fa-seedling"></i> Seeding</button>
+      <button class="btn model-available" id="upload-btn"><i class="fas fa-check-circle"></i> Model Available</button>
+      <button class="btn" id="export-btn"><i class="fas fa-download"></i> Export</button>
+      <button class="btn" id="reset-btn"><i class="fas fa-trash"></i> Reset</button>
+    </div>
+
+    <!-- Live Feed -->
+    <div class="card live-feed tilt-card" data-tilt>
+      <h3>LATEST</h3>
+      <div id="latest-analysis">
+        <img id="latest-img" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQwIiBoZWlnaHQ9IjQ4MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMTExIj48L3JlY3Q+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJzYW5zLXNlcmlmIiBmb250LXNpemU9IjI0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSI+Tm8gYW5hbHlzaXMgeWV0PC90ZXh0Pjwvc3Zn+" alt="">
+        <div id="analysis-overlay" class="overlay" style="display:none;"></div>
+      </div>
+    </div>
+
+    <!-- Plant Count -->
+    <div class="card count tilt-card" data-tilt>
+      <h3>COUNT</h3>
+      <div class="d">Diseased: <span id="diseased-count">0</span></div>
+      <div class="h">Healthy: <span id="healthy-count">0</span></div>
+    </div>
+
+    <!-- History -->
+    <div class="card history tilt-card" data-tilt>
+      <h3>HISTORY</h3>
+      <ul id="history-list"></ul>
+    </div>
+
+    <!-- Recommendations -->
+    <div class="card recs tilt-card" data-tilt>
+      <h3>RECS</h3>
+      <div id="recommendation">None yet.</div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card chart tilt-card" data-tilt>
+      <h3>CHART</h3>
+      <canvas id="pie-chart"></canvas>
+    </div>
+
+    <!-- Sensors -->
+    <div class="card sensors tilt-card" data-tilt>
+      <h3>SENSORS</h3>
+      <div>Soil: <span id="soil">Normal</span></div>
+      <div>Temp: <span id="temp">27</span>°C</div>
+      <div>Hum: <span id="humidity">65</span>%</div>
+      <div>pH: <span id="ph">6.5</span></div>
+      <div>Light: <span id="light">Medium</span></div>
+    </div>
+
+    <!-- Current Process -->
+    <div class="card process tilt-card" data-tilt>
+      <h3>PROCESS</h3>
+      <span id="current-process">IDLE</span>
+    </div>
+
+    <!-- System Status -->
+    <div class="card status tilt-card" data-tilt>
+      <h3>STATUS</h3>
+      <span id="status-text">IDLE</span>
+    </div>
+  </div>
+
+  <!-- Image Modal -->
+  <div id="image-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">x</span>
+      <h2>Analyze Plant</h2>
+      <p>Capture or upload image.</p>
+      <div id="initial-options" style="display:flex; gap:8px; margin:12px 0;">
+        <button id="use-camera" class="btn">Camera</button>
+        <button id="upload-image" class="btn">Upload</button>
+      </div>
+      <div id="camera-view" style="display:none;">
+        <video id="camera-feed" autoplay playsinline style="width:100%; border-radius:10px;"></video>
+        <button id="capture" class="btn">Capture</button>
+      </div>
+      <div class="upload-area" id="upload-area" style="display:none;">
+        <p>Drop or click</p>
+        <input type="file" id="image-input" accept="image/*" style="display:none;">
+      </div>
+      <div class="progress-bar"><div id="progress-bar" class="progress"></div></div>
+      <button id="analyze-btn" class="btn" style="display:none;">Analyze</button>
+    </div>
+  </div>
+
+  <!-- Task Modal -->
+  <div id="task-modal" class="modal">
+    <div class="modal-content">
+      <span class="close">x</span>
+      <h2 id="task-title">Task</h2>
+      <p id="task-message">Started.</p>
+      <button id="task-ok" class="btn">OK</button>
+    </div>
+  </div>
+
+  <script>
+    AOS.init({ duration: 800, once: true });
+
+    // === ELEMENTS ===
+    const els = {
+      diseasedCount: document.getElementById('diseased-count'),
+      healthyCount: document.getElementById('healthy-count'),
+      historyList: document.getElementById('history-list'),
+      recommendation: document.getElementById('recommendation'),
+      pieChart: document.getElementById('pie-chart'),
+      soil: document.getElementById('soil'),
+      temp: document.getElementById('temp'),
+      humidity: document.getElementById('humidity'),
+      ph: document.getElementById('ph'),
+      light: document.getElementById('light'),
+      currentProcess: document.getElementById('current-process'),
+      statusText: document.getElementById('status-text'),
+      latestImg: document.getElementById('latest-img'),
+      analysisOverlay: document.getElementById('analysis-overlay'),
+      imageModal: document.getElementById('image-modal'),
+      taskModal: document.getElementById('task-modal'),
+      uploadArea: document.getElementById('upload-area'),
+      imageInput: document.getElementById('image-input'),
+      analyzeBtn: document.getElementById('analyze-btn'),
+      cameraFeed: document.getElementById('camera-feed'),
+      captureBtn: document.getElementById('capture'),
+      useCameraBtn: document.getElementById('use-camera'),
+      uploadImageBtn: document.getElementById('upload-image'),
+      progressBar: document.getElementById('progress-bar'),
+      initialOptions: document.getElementById('initial-options'),
+      cameraView: document.getElementById('camera-view'),
+      taskTitle: document.getElementById('task-title'),
+      taskMessage: document.getElementById('task-message'),
+      taskOk: document.getElementById('task-ok'),
+    };
+
+    // === STATE ===
+    let diseasedCount = 0, healthyCount = 0;
+    let imageForAnalysis = null, lastAnalyzedImage = null, lastResult = null;
+    let analysisHistory = [];
+    let pieChart = null;
+
+    // Load from localStorage
+    if (localStorage.diseasedCount) diseasedCount = +localStorage.diseasedCount;
+    if (localStorage.healthyCount) healthyCount = +localStorage.healthyCount;
+    if (localStorage.analysisHistory) analysisHistory = JSON.parse(localStorage.analysisHistory);
+    if (localStorage.theme === 'light') document.body.setAttribute('data-theme', 'light');
+
+    els.diseasedCount.textContent = diseasedCount;
+    els.healthyCount.textContent = healthyCount;
+    updateHistory();
+    updateChart();
+    updateRecommendation();
+
+    // === UTILS ===
+    const updateStatus = (text) => els.statusText.textContent = text;
+    const updateProcess = (text) => els.currentProcess.textContent = text;
+    const showToast = (msg) => {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    };
+    const showTask = (title, msg) => {
+      els.taskTitle.textContent = title;
+      els.taskMessage.textContent = msg;
+      els.taskModal.style.display = 'flex';
+    };
+    const closeModals = () => {
+      els.imageModal.style.display = els.taskModal.style.display = 'none';
+      stopCamera();
+    };
+
+    // === PARTICLES ===
+    const particles = document.getElementById('particles');
+    function createParticle() {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      const size = Math.random() * 5 + 2;
+      p.style.width = p.style.height = `${size}px`;
+      p.style.left = `${Math.random() * 100}vw`;
+      p.style.animationDuration = `${Math.random() * 10 + 10}s`;
+      p.style.animationDelay = `${Math.random() * 5}s`;
+      particles.appendChild(p);
+      setTimeout(() => p.remove(), 20000);
+    }
+    setInterval(createParticle, 600);
+
+    // === THEME TOGGLE ===
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const isLight = document.body.getAttribute('data-theme') === 'light';
+      document.body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+      localStorage.theme = isLight ? 'dark' : 'light';
+      showToast(isLight ? "Dark Mode" : "Light Mode");
+    });
+
+    // === CHART ===
+    function updateChart() {
+      const ctx = els.pieChart.getContext('2d');
+      if (pieChart) pieChart.destroy();
+      pieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Diseased', 'Healthy'],
+          datasets: [{
+            data: [diseasedCount, healthyCount],
+            backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--danger'), getComputedStyle(document.documentElement).getPropertyValue('--success')],
+            borderWidth: 2,
+            borderColor: '#000'
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { position: 'bottom' } }
+        }
+      });
+    }
+
+    // === HISTORY & RECOMMENDATION ===
+    function updateHistory() {
+      els.historyList.innerHTML = '';
+      analysisHistory.slice(-10).forEach(h => {
+        const li = document.createElement('li');
+        li.textContent = `${new Date(h.ts).toLocaleTimeString()}: ${h.result} (${h.confidence}%)`;
+        els.historyList.appendChild(li);
+      });
+    }
+    function updateRecommendation() {
+      if (!lastResult) {
+        els.recommendation.textContent = 'None yet.';
+      } else {
+        els.recommendation.textContent = lastResult.result.includes('healthy')
+          ? 'Healthy. Maintain current conditions.'
+          : 'Apply pesticide, adjust pH, isolate plant.';
+      }
+    }
+
+    // === SENSOR SIMULATION ===
+    function updateSensors() {
+      const moisture = ['Dry', 'Normal', 'Wet'];
+      const light = ['Low', 'Medium', 'High'];
+      els.soil.textContent = moisture[Math.floor(Math.random() * 3)];
+      els.temp.textContent = Math.floor(Math.random() * 16) + 20;
+      els.humidity.textContent = Math.floor(Math.random() * 41) + 40;
+      els.ph.textContent = (Math.random() * 2 + 5.5).toFixed(1);
+      els.light.textContent = light[Math.floor(Math.random() * 3)];
+    }
+    setInterval(updateSensors, 15000);
+    updateSensors();
+
+    // === BUTTON ACTIONS ===
+    document.getElementById('rescan-btn').onclick = () => {
+      if (!lastAnalyzedImage) return showTask("Error", "Analyze first.");
+      updateProcess("RESCANNING");
+      imageForAnalysis = lastAnalyzedImage;
+      analyzeImage();
+    };
+    document.getElementById('classify-btn').onclick = () => {
+      updateProcess("CLASSIFYING");
+      els.imageModal.style.display = 'flex';
+      resetImageModal();
+    };
+    ['water-btn', 'pesticide-btn', 'seeding-btn'].forEach(id => {
+      document.getElementById(id).onclick = () => {
+        const action = id.split('-')[0].toUpperCase();
+        updateProcess(action);
+        showTask(action, "Started.");
+        setTimeout(() => updateProcess("IDLE"), 2000);
+      };
+    });
+    document.getElementById('upload-btn').onclick = () => {
+      showToast("Model is already available on the server");
+    };
+    document.getElementById('export-btn').onclick = () => {
+      const data = { diseased: diseasedCount, healthy: healthyCount, history: analysisHistory };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'econeura-report.json'; a.click();
+      URL.revokeObjectURL(url);
+    };
+    document.getElementById('reset-btn').onclick = () => {
+      diseasedCount = healthyCount = 0;
+      analysisHistory = [];
+      localStorage.clear();
+      els.diseasedCount.textContent = els.healthyCount.textContent = 0;
+      updateHistory(); updateChart(); updateRecommendation();
+      showTask("Reset", "All data cleared.");
+    };
+
+    // === MODAL CLOSE ===
+    document.querySelectorAll('.close').forEach(btn => btn.onclick = closeModals);
+    els.taskOk.onclick = () => els.taskModal.style.display = 'none';
+
+    // === IMAGE MODAL ===
+    function resetImageModal() {
+      els.initialOptions.style.display = 'flex';
+      els.cameraView.style.display = els.uploadArea.style.display = 'none';
+      els.uploadArea.innerHTML = '<p>Drop or click</p>';
+      els.analyzeBtn.style.display = 'none';
+      els.progressBar.style.width = '0%';
+      imageForAnalysis = null;
+      els.imageInput.value = '';
+    }
+    els.uploadArea.onclick = () => els.imageInput.click();
+    els.imageInput.onchange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          imageForAnalysis = new Image();
+          imageForAnalysis.src = ev.target.result;
+          imageForAnalysis.onload = () => {
+            els.uploadArea.innerHTML = `<img src="${ev.target.result}" style="max-width:100%;max-height:160px;border-radius:10px;">`;
+            els.analyzeBtn.style.display = 'block';
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+    els.useCameraBtn.onclick = async () => {
+      try {
+        els.initialOptions.style.display = 'none';
+        els.cameraView.style.display = 'block';
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        els.cameraFeed.srcObject = stream;
+        els.cameraFeed.onloadedmetadata = () => els.cameraFeed.play();
+      } catch (err) {
+        showTask("Camera Error", "Enable camera in HTTPS.");
+        resetImageModal();
+      }
+    };
+    function stopCamera() {
+      if (els.cameraFeed.srcObject) {
+        els.cameraFeed.srcObject.getTracks().forEach(t => t.stop());
+      }
+    }
+    els.captureBtn.onclick = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = els.cameraFeed.videoWidth;
+      canvas.height = els.cameraFeed.videoHeight;
+      canvas.getContext('2d').drawImage(els.cameraFeed, 0, 0);
+      const dataUrl = canvas.toDataURL('image/jpeg');
+      imageForAnalysis = new Image();
+      imageForAnalysis.src = dataUrl;
+      imageForAnalysis.onload = () => {
+        stopCamera();
+        els.cameraView.style.display = 'none';
+        els.uploadArea.innerHTML = `<img src="${dataUrl}" style="max-width:100%;max-height:160px;border-radius:10px;">`;
+        els.uploadArea.style.display = 'block';
+        els.analyzeBtn.style.display = 'block';
+        setTimeout(analyzeImage, 500);
+      };
+    };
+    els.uploadImageBtn.onclick = () => {
+      els.initialOptions.style.display = 'none';
+      els.uploadArea.style.display = 'block';
+    };
+
+    // === ANALYSIS ===
+    async function analyzeImage() {
+      if (!imageForAnalysis) return;
+      updateStatus("Analyzing...");
+      const isModalOpen = els.imageModal.style.display === 'flex';
+      if (isModalOpen) {
+        els.analyzeBtn.disabled = true;
+        els.analyzeBtn.textContent = "Analyzing...";
+        els.progressBar.style.width = '30%';
+      }
+
+      try {
+        // Convert image to blob for sending to Flask
+        const canvas = document.createElement('canvas');
+        canvas.width = imageForAnalysis.width;
+        canvas.height = imageForAnalysis.height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(imageForAnalysis, 0, 0);
+        
+        canvas.toBlob(async (blob) => {
+          const formData = new FormData();
+          formData.append('file', blob, 'plant.jpg');
+          
+          if (isModalOpen) els.progressBar.style.width = '50%';
+          
+          // Send to Flask backend
+          const response = await fetch('/predict', {
+            method: 'POST',
+            body: formData
+          });
+          
+          if (isModalOpen) els.progressBar.style.width = '80%';
+          
+          if (!response.ok) {
+            throw new Error('Server error');
+          }
+          
+          const result = await response.json();
+          
+          if (isModalOpen) els.progressBar.style.width = '100%';
+          
+          // Process the result
+          const isHealthy = result.label.includes('healthy');
+          const confidence = parseFloat(result.confidence);
+          
+          if (imageForAnalysis !== lastAnalyzedImage) {
+            if (isHealthy) {
+              healthyCount++;
+              els.healthyCount.textContent = healthyCount;
+              localStorage.healthyCount = healthyCount;
+              confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 }, colors: ['#00ff88', '#00cc66'] });
+            } else {
+              diseasedCount++;
+              els.diseasedCount.textContent = diseasedCount;
+              localStorage.diseasedCount = diseasedCount;
+            }
+            
+            const entry = { 
+              ts: Date.now(), 
+              result: result.label, 
+              confidence: confidence.toFixed(2) 
+            };
+            analysisHistory.push(entry);
+            if (analysisHistory.length > 50) analysisHistory.shift();
+            localStorage.analysisHistory = JSON.stringify(analysisHistory);
+            updateHistory();
+            updateChart();
+            updateRecommendation();
+          }
+
+          lastAnalyzedImage = imageForAnalysis;
+          lastResult = { result: result.label, confidence };
+
+          els.latestImg.src = imageForAnalysis.src;
+          els.analysisOverlay.textContent = `${result.label} (${confidence.toFixed(2)}%)`;
+          els.analysisOverlay.className = `overlay ${isHealthy ? 'healthy' : 'diseased'}`;
+          els.analysisOverlay.style.display = 'block';
+
+          if (isModalOpen) {
+            setTimeout(() => {
+              closeModals();
+              showTask("Analysis Complete", `${result.label} (${confidence.toFixed(2)}%)`);
+              updateProcess("IDLE");
+              updateStatus("IDLE");
+              els.analyzeBtn.disabled = false;
+              els.analyzeBtn.textContent = "Analyze";
+            }, 1000);
+          } else {
+            updateProcess("IDLE");
+            updateStatus("IDLE");
+          }
+        }, 'image/jpeg', 0.9);
+      } catch (error) {
+        console.error('Analysis error:', error);
+        showTask("Analysis Error", "Failed to analyze image");
+        updateProcess("IDLE");
+        updateStatus("IDLE");
+        if (isModalOpen) {
+          els.analyzeBtn.disabled = false;
+          els.analyzeBtn.textContent = "Analyze";
+        }
+      }
+    }
+    els.analyzeBtn.onclick = analyzeImage;
+
+    // === 3D TILT ===
+    VanillaTilt.init(document.querySelectorAll(".tilt-card"), {
+      max: 12,
+      speed: 400,
+      glare: true,
+      "max-glare": 0.4,
+    });
+  </script>
+</body>
+</html>
