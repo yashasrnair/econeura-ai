@@ -10,7 +10,7 @@ app = Flask(__name__)
 # --------------------------------------------------
 # 1️⃣ Load TFLite Model
 # --------------------------------------------------
-MODEL_PATH = r".\enhanced_model_web_final.tflite"
+MODEL_PATH = "enhanced_model_web_final.tflite"
 
 CLASS_NAMES = [
     "cherry_diseased","cherry_healthy",
